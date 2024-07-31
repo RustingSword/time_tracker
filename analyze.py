@@ -32,8 +32,15 @@ def map_activity_to_category(activity, app_categories):
 def process_data():
     activity_df = pd.read_csv("activity_log.csv")
 
-    with open("app_categories.json", "r") as f:
-        app_categories = json.load(f)
+    activity_df["date"] = pd.to_datetime(activity_df["timestamp"], unit="s")
+    today = pd.Timestamp.today().normalize().date()
+    activity_df = activity_df[activity_df["date"].dt.date == today]
+
+    try:
+        with open("app_categories.json", "r") as f:
+            app_categories = json.load(f)
+    except:
+        app_categories = {}
 
     activity_df["duration"] = (
         activity_df["timestamp"].shift(-1) - activity_df["timestamp"]
@@ -46,7 +53,7 @@ def process_data():
     activity_df["mapped_category"] = activity_df["activity"].apply(
         lambda x: map_activity_to_category(x, app_categories)
     )
-    activity_df = activity_df[activity_df["mapped_category"] != "unknown"]
+    activity_df = activity_df[activity_df["mapped_category"] != "Unknown"]
 
     with open("app_categories.json", "w") as f:
         json.dump(app_categories, f, indent=4, ensure_ascii=False)
@@ -64,10 +71,11 @@ def process_data():
 
 
 def plot_data(data):
+    today = pd.Timestamp.today().normalize().date()
+    print(data.to_markdown())
     plt.figure(figsize=(10, 6))
     data.sort_values().plot(kind="barh")
-    print(data.to_markdown())
-    plt.title("Accumulated Usage of Each Activity Category")
+    plt.title(f"Accumulated Usage of Each Activity Category {today}")
     plt.xlabel("Accumulated Time (minutes)")
     plt.ylabel("Activity Category")
     plt.grid(axis="x")

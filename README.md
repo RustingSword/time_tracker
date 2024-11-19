@@ -1,22 +1,98 @@
 # Time Tracker
 
-A cross-platform desktop time tracker based on active window tracking.
+A cross-platform desktop time tracker based on active window tracking. This tool helps you understand how you spend your time by monitoring active windows and generating insightful visualizations.
 
-## Dependency
+## Features
 
-- [PyMonCtl](https://pypi.org/project/PyMonCtl/)
-- [PyWinCtl](https://pypi.org/project/PyWinCtl/)
+- Automatic window activity tracking
+- Categorization of activities with interactive prompts
+- Rich visualizations (pie charts and bar charts)
+- Detailed activity summaries and insights
+- Browser URL tracking support
+- Inactivity detection and logging
 
-If you want to differentiate each webpage and track fine-grained time usage in browsers, you'll need to install extensions to insert URL to tab titles.
+## Installation
 
-- For Chrome, there's [URL in title](https://chrome.google.com/webstore/detail/url-in-title/ignpacbgnbnkaiooknalneoeladjnfgb)
-- For Firefox, there's [Add URL to Window Title](https://addons.mozilla.org/en-US/firefox/addon/add-url-to-window-title/)
+### Prerequisites
+
+If you want to track URLs in browsers, install these extensions:
+- Chrome: [URL in title](https://chrome.google.com/webstore/detail/url-in-title/ignpacbgnbnkaiooknalneoeladjnfgb)
+- Firefox: [Add URL to Window Title](https://addons.mozilla.org/en-US/firefox/addon/add-url-to-window-title/)
+
+### Install from Source
+
+```bash
+git clone https://github.com/RustingSword/time_tracker.git
+cd time_tracker
+pip install -e .
+```
 
 ## Usage
 
-- Track your time usage: run `python track.py`, and the tracked activity logs will be written into `activity_log.csv`.
-- Analyze your time usage: run `python analyze.py`, and it will plot the time spent in each activity category (requires `matplotlib` and `pandas`). The mapping from active window name to activity category is saved in `app_categories.json`, which can be manually edited. If a window has no mapping found, the script will ask for it, then save the mapping automatically in the file.
+### Track Your Time
 
-## Todo
+Start the activity tracker:
+```bash
+track
+```
 
-- More advanced data analysis features, such as by each day/week/month etc.
+Options:
+- `-i, --interval`: Set logging interval in seconds (default: 10)
+- `-l, --log-file`: Specify log file path (default: activity_log.csv)
+
+### Analyze Your Time
+
+Analyze tracked activities:
+```bash
+analyze
+```
+
+Options:
+- `-d, --date`: Date to analyze (YYYY-MM-DD, 'today', or 'yesterday')
+- `-o, --output`: Visualization type ('bar', 'pie', or 'both')
+- `-l, --log-file`: Input log file path
+- `-c, --category-file`: Category mapping file path
+
+The tool will:
+1. Generate an activity summary table
+2. Show insights about most used applications
+3. Display peak activity hours
+4. Create visualizations (saved as PNG files)
+
+### Configuration
+
+Activity categories are stored in `app_categories.json`. When a new application is encountered, you'll be prompted to categorize it. You can also manually edit this file:
+
+```json
+{
+    "Google Chrome": "browsing",
+    "Visual Studio Code": "programming",
+    "Terminal": "development"
+}
+```
+
+## Development
+
+The project is structured as follows:
+```
+timetracker/
+├── timetracker/
+│   ├── __init__.py
+│   ├── analyzer.py     # Activity analysis logic
+│   ├── config.py       # Configuration settings
+│   ├── logger.py       # Activity tracking logic
+│   ├── models.py       # Data models
+│   └── visualization.py # Visualization tools
+├── analyze.py          # Analysis CLI
+├── track.py           # Tracking CLI
+├── setup.py          # Package setup
+└── README.md
+```
+
+## License
+
+MIT License - see LICENSE file for details.
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
